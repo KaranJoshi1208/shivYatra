@@ -110,165 +110,235 @@ class ShivYatraChatbotUI:
     def create_interface(self) -> gr.Blocks:
         """Create Gradio interface"""
         
-        # Custom CSS for better styling
+        # Custom CSS inspired by the provided reference UI
         custom_css = """
-        .gradio-container {
-            background: linear-gradient(135deg, #1a1a1a 0%, #2d2d2d 100%);
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        :root {
+            --bg: #f5f6fb;
+            --panel: #ffffff;
+            --border: #e5e7eb;
+            --text: #111827;
+            --muted: #6b7280;
+            --accent: #22c55e;
+            --accent-soft: #d1fae5;
+            --card-shadow: 0 10px 30px rgba(0,0,0,0.06);
+            --radius: 12px;
         }
-        .chat-container {
-            background: #ffffff;
-            border-radius: 8px;
-            box-shadow: 0 4px 20px rgba(0,0,0,0.15);
-            border: 1px solid #e0e0e0;
+        body, .gradio-container {
+            background: var(--bg);
+            font-family: 'Inter', 'Segoe UI', system-ui, -apple-system, sans-serif;
+            color: var(--text);
         }
-        .header {
-            text-align: center;
-            padding: 24px;
-            background: linear-gradient(135deg, #2c3e50 0%, #34495e 100%);
-            color: #ffffff;
-            border-radius: 8px 8px 0 0;
-            border-bottom: 2px solid #1a252f;
+        .topbar {
+            background: var(--panel);
+            border: 1px solid var(--border);
+            border-radius: 14px;
+            padding: 12px 16px;
+            box-shadow: var(--card-shadow);
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            margin-bottom: 14px;
         }
-        .status-panel {
-            background: #f8f9fa;
-            border: 1px solid #dee2e6;
-            border-radius: 6px;
+        .topbar .logo {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            font-weight: 700;
+            color: var(--text);
+        }
+        .layout {
+            display: grid;
+            grid-template-columns: 280px 1fr;
+            gap: 16px;
+        }
+        .sidebar {
+            background: var(--panel);
+            border: 1px solid var(--border);
+            border-radius: 14px;
             padding: 16px;
+            box-shadow: var(--card-shadow);
         }
-        .professional-text {
-            color: #2c3e50;
-            line-height: 1.6;
+        .sidebar h3 {
+            margin: 0 0 12px 0;
+            font-size: 1rem;
+            color: var(--text);
         }
+        .nav-list { list-style: none; padding: 0; margin: 0 0 18px 0; }
+        .nav-item {
+            display: flex; align-items: center; gap: 10px;
+            padding: 10px 12px; border-radius: 10px;
+            color: var(--text); cursor: default; border: 1px solid transparent;
+        }
+        .nav-item.active { background: #eef2ff; border-color: #e0e7ff; font-weight: 600; }
+        .recent-card {
+            border: 1px solid var(--border);
+            border-radius: 10px;
+            padding: 10px 12px;
+            margin-bottom: 10px;
+            background: #f9fafb;
+        }
+        .main-panel {
+            display: flex;
+            flex-direction: column;
+            gap: 16px;
+        }
+        .hero {
+            background: var(--panel);
+            border: 1px solid var(--border);
+            border-radius: 18px;
+            padding: 28px;
+            box-shadow: var(--card-shadow);
+            text-align: center;
+        }
+        .hero-title { font-size: 2rem; margin: 10px 0 6px 0; color: var(--text); }
+        .hero-sub { color: var(--muted); margin: 0; }
+        .cards {
+            display: grid;
+            grid-template-columns: repeat(3, minmax(0, 1fr));
+            gap: 12px;
+        }
+        .feature-card {
+            background: var(--panel);
+            border: 1px solid var(--border);
+            border-radius: 12px;
+            padding: 16px;
+            box-shadow: var(--card-shadow);
+            text-align: left;
+        }
+        .chat-box {
+            background: var(--panel);
+            border: 1px solid var(--border);
+            border-radius: 14px;
+            padding: 12px;
+            box-shadow: var(--card-shadow);
+        }
+        .input-row { display: flex; gap: 10px; align-items: center; }
+        .input-row .controls { display: flex; gap: 6px; }
+        .input-row .controls button { border-radius: 10px; }
+        .small-btn { padding: 8px 12px; border: 1px solid var(--border); background: #f9fafb; color: var(--muted); }
+        .green-outline { border: 1px solid var(--accent); box-shadow: 0 0 0 2px var(--accent-soft); }
+        .gradio-container .prose p { margin: 0; }
         """
         
-        with gr.Blocks(
-            title=UI_CONFIG["title"]
-        ) as interface:
+        with gr.Blocks(title=UI_CONFIG["title"], css=custom_css, theme=UI_CONFIG["theme"]) as interface:
+            # Top bar
+            gr.HTML(
+                """
+                <div class="topbar">
+                    <div class="logo">🌄 ShivYatra.AI</div>
+                    <div style="flex:1"></div>
+                    <div style="display:flex; gap:8px; align-items:center; color:#6b7280;">
+                        <span>ShivYatra RAG v1.0</span>
+                        <span style="width:1px;height:18px;background:#e5e7eb;"></span>
+                        <span>Secure Session</span>
+                    </div>
+                </div>
+                """
+            )
             
-            # Header
-            gr.HTML(f"""
-            <div class="header">
-                <h1 style="margin: 0; font-size: 2.2em; font-weight: 600; color: #ffffff;">ShivYatra Tourism Assistant</h1>
-                <p style="margin: 8px 0 4px 0; font-size: 1.1em; color: #ecf0f1;">Professional AI-Powered Travel Consultation Platform</p>
-                <p style="margin: 0; font-size: 0.95em; color: #bdc3c7;"><em>Advanced RAG Technology | Ollama LLM | Vector Database</em></p>
-            </div>
-            """)
-            
-            with gr.Row():
-                with gr.Column(scale=4):
-                    # Main chat interface
-                    chatbot = gr.Chatbot(
-                        label="Professional Travel Consultation",
-                        placeholder="Welcome to ShivYatra Professional Tourism Consultation Platform",
-                        height=500,
-                        container=True,
-                        show_label=False
+            with gr.Row(elem_classes="layout"):
+                # Sidebar
+                with gr.Column(elem_classes="sidebar"):
+                    gr.HTML(
+                        """
+                        <h3>AI Modules</h3>
+                        <ul class="nav-list">
+                            <li class="nav-item active">AI Chat</li>
+                            <li class="nav-item">AI Video</li>
+                            <li class="nav-item">AI Image</li>
+                            <li class="nav-item">Documents</li>
+                            <li class="nav-item">Community</li>
+                            <li class="nav-item">History</li>
+                        </ul>
+                        <h3>Recent Chat</h3>
+                        <div class="recent-card">Trip ideas for Spiti Valley</div>
+                        <div class="recent-card">Family plan for Himachal</div>
+                        <div class="recent-card">Solo trek in Uttarakhand</div>
+                        <button class="small-btn" style="width:100%;">Show More</button>
+                        <div style="margin-top:14px; border-top:1px solid var(--border); padding-top:12px; color:var(--muted);">
+                            Settings · Help
+                        </div>
+                    """
+                    )
+                
+                # Main content
+                with gr.Column(elem_classes="main-panel"):
+                    gr.HTML(
+                        """
+                        <div class="hero">
+                            <div style="display:flex; justify-content:center;">
+                                <div style="width:70px;height:70px;border-radius:50%; background: radial-gradient(circle at 30% 30%, #7ef3a2, #16a34a); box-shadow: 0 10px 30px rgba(34,197,94,0.35);"></div>
+                            </div>
+                            <h1 class="hero-title">Welcome to ShivYatra.AI</h1>
+                            <p class="hero-sub">Share your travel goal and let the assistant handle the research, planning, and recommendations.</p>
+                        </div>
+                        """
                     )
                     
-                    with gr.Row():
-                        msg_input = gr.Textbox(
-                            placeholder="Enter your travel inquiry: destinations, activities, budget planning, or consultation requests...",
-                            container=False,
-                            scale=4,
-                            lines=1
-                        )
-                        send_btn = gr.Button("Send", variant="primary", scale=1)
-                        clear_btn = gr.Button("Clear", variant="secondary", scale=1)
+                    gr.HTML(
+                        """
+                        <div class="cards">
+                            <div class="feature-card">
+                                <div style="font-weight:700; margin-bottom:6px;">Productivity Boost</div>
+                                <p style="color:var(--muted); margin:0;">Get quick, curated destination ideas with top picks and must-dos.</p>
+                            </div>
+                            <div class="feature-card">
+                                <div style="font-weight:700; margin-bottom:6px;">User-Friendly Onboarding</div>
+                                <p style="color:var(--muted); margin:0;">Share who you are and we tailor the itinerary for family, solo, or adventure.</p>
+                            </div>
+                            <div class="feature-card">
+                                <div style="font-weight:700; margin-bottom:6px;">Voice-Activated Responses</div>
+                                <p style="color:var(--muted); margin:0;">Hands-free travel planning with concise, reliable answers.</p>
+                            </div>
+                        </div>
+                        """
+                    )
                     
-                    # Example questions
-                    with gr.Accordion("Example Questions", open=False):
-                        examples = gr.Examples(
-                            examples=self.get_example_questions(),
-                            inputs=[msg_input],
-                            label="Click on any question to try it:"
+                    # Chat area
+                    with gr.Column(elem_classes="chat-box"):
+                        chatbot = gr.Chatbot(
+                            label=None,
+                            placeholder="Ask me anything about Indian travel...",
+                            height=280,
+                            show_label=False,
+                            container=False
                         )
-                
-                with gr.Column(scale=1):
-                    # Status panel
-                    with gr.Accordion("System Status", open=True):
-                        status_display = gr.Markdown(
-                            self.get_system_status(),
-                            label="System Status"
-                        )
-                        refresh_btn = gr.Button("Refresh Status", variant="secondary")
-                    
-                    # Information panel
-                    with gr.Accordion("About", open=False):
-                        gr.Markdown("""
-                        **ShivYatra Professional Tourism Platform**
-                        
-                        **Technical Specifications:**
-                        • AI Model: Qwen2.5:1.5B via Ollama
-                        • Knowledge Base: 4,160+ curated tourism entries
-                        • Coverage: Himachal Pradesh, Uttarakhand, Jammu & Kashmir, Ladakh
-                        
-                        **Service Capabilities:**
-                        • Destination Analysis & Recommendations
-                        • Activity Planning & Consultation
-                        • Budget Optimization Strategies
-                        • Cultural Intelligence & Local Insights
-                        • Professional Travel Advisory
-                        
-                        **System Requirements:**
-                        Ensure Ollama service is active:
-                        ```bash
-                        ollama serve
-                        ```
-                        """)
-            
+                        with gr.Row(elem_classes="input-row"):
+                            msg_input = gr.Textbox(
+                                placeholder="Ask me anything...",
+                                lines=1,
+                                scale=4,
+                                elem_classes=["green-outline"]
+                            )
+                            send_btn = gr.Button("Send", variant="primary")
+                        with gr.Row(elem_classes="controls"):
+                            attach_btn = gr.Button("Attach", elem_classes=["small-btn"])
+                            voice_btn = gr.Button("Voice Message", elem_classes=["small-btn"])
+                            prompt_btn = gr.Button("Browse Prompts", elem_classes=["small-btn"])
+                            clear_btn = gr.Button("Clear", elem_classes=["small-btn"])
+                        status_display = gr.Markdown(self.get_system_status(), visible=False)
+
             # Event handlers
-            
-            # Send message on button click or Enter key
             def submit_message(message, history):
                 if not message.strip():
                     return "", history
                 updated_history = self.chat_fn(message, history)
                 return "", updated_history
-            
-            send_btn.click(
-                submit_message,
-                inputs=[msg_input, chatbot],
-                outputs=[msg_input, chatbot]
-            )
-            
-            msg_input.submit(
-                submit_message,
-                inputs=[msg_input, chatbot],
-                outputs=[msg_input, chatbot]
-            )
-            
-            # Clear chat
-            def clear_and_reset():
-                return self.clear_chat(), ""
-            
-            clear_btn.click(
-                clear_and_reset,
-                outputs=[chatbot, msg_input]
-            )
-            
-            # Refresh status
-            refresh_btn.click(
-                self.get_system_status,
-                outputs=status_display
-            )
-            
-            # Welcome message
+
+            send_btn.click(submit_message, inputs=[msg_input, chatbot], outputs=[msg_input, chatbot])
+            msg_input.submit(submit_message, inputs=[msg_input, chatbot], outputs=[msg_input, chatbot])
+            clear_btn.click(lambda: (self.clear_chat(), ""), outputs=[chatbot, msg_input])
+            attach_btn.click(lambda x: (x, chatbot.value if hasattr(chatbot, "value") else []), inputs=msg_input, outputs=[msg_input, chatbot])
+            voice_btn.click(lambda x: (x, chatbot.value if hasattr(chatbot, "value") else []), inputs=msg_input, outputs=[msg_input, chatbot])
+            prompt_btn.click(lambda: ("Suggest a 3-day Himachal itinerary", chatbot.value if hasattr(chatbot, "value") else []), outputs=[msg_input, chatbot])
+
             def load_welcome():
                 return [{
                     "role": "assistant",
-                    "content": """
-**Welcome to ShivYatra Professional Tourism Consultation Platform**
-
-I am your dedicated AI travel consultant, specializing in comprehensive tourism solutions across India's premier destinations.
-How can I assist you in planning your next unforgettable journey?
-                    """
+                    "content": "Welcome to ShivYatra.AI — tell me your travel goal and I'll craft a plan."
                 }]
-            
-            interface.load(
-                load_welcome,
-                outputs=chatbot
-            )
+
+            interface.load(load_welcome, outputs=chatbot)
         
         return interface
     
