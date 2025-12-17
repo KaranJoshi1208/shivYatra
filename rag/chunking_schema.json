@@ -1,0 +1,31 @@
+{
+  "chunk_id": "in_hp_manali_acc_budget_001",
+  "content": "Hotel Snow Peak offers...",
+  
+  "location": {
+    "country": "India",
+    "state": "Himachal Pradesh",
+    "city": "Manali",
+    "coordinates": [32.2432, 77.1892]
+  },
+  
+  "classification": {
+    "category": "accommodation",
+    "subcategory": "budget_hotel"
+  },
+  
+  "practical_info": {
+    "price_range": "budget",
+    "prices": ["₹1200", "₹800-2000"],
+    "has_contact": false,
+    "seasonal": ["all_year"]
+  },
+  
+  "relevance_scores": {
+    "solo_traveler": 8,
+    "family": 6,
+    "adventure": 4
+  },
+  
+  "last_updated": "2024-12-16"
+}
