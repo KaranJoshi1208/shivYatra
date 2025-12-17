@@ -31,8 +31,8 @@ def check_dependencies():
             missing.append(module)
     
     if missing:
-        print(f"❌ Missing dependencies: {', '.join(missing)}")
-        print("💡 Install with: pip install " + " ".join(missing))
+        print(f"Missing dependencies: {', '.join(missing)}")
+        print("Install with: pip install " + " ".join(missing))
         return False
     
     return True
@@ -48,45 +48,41 @@ def check_ollama_service():
 
 def main():
     """Main application launcher"""
-    print("🏔️ ShivYatra Tourism Chatbot Launcher")
+    print("ShivYatra Tourism Chatbot Launcher")
     print("=" * 50)
     
-    # Check dependencies
-    print("🔍 Checking dependencies...")
+    print("Checking dependencies...")
     if not check_dependencies():
         return 1
-    print("✅ All dependencies available")
+    print("All dependencies available")
     
-    # Check Ollama
-    print("🦙 Checking Ollama service...")
+    print("Checking Ollama service...")
     if not check_ollama_service():
-        print("❌ Ollama service not running!")
-        print("💡 Start Ollama with: ollama serve")
-        print("💡 Make sure qwen2.5:1.5b is installed: ollama pull qwen2.5:1.5b")
+        print("Ollama service not running!")
+        print("Start Ollama with: ollama serve")
+        print("Make sure qwen2.5:1.5b is installed: ollama pull qwen2.5:1.5b")
         return 1
-    print("✅ Ollama service running")
+    print("Ollama service running")
     
-    # Check vector database
     vector_db_path = PROJECT_ROOT.parent / "vector_db" / "chromadb"
     if not vector_db_path.exists():
-        print("❌ Vector database not found!")
-        print(f"💡 Expected at: {vector_db_path}")
-        print("💡 Run vector database initialization first")
+        print("Vector database not found!")
+        print(f"Expected at: {vector_db_path}")
+        print("Run vector database initialization first")
         return 1
-    print("✅ Vector database found")
+    print("Vector database found")
     
-    # Launch chatbot
-    print("🚀 Starting ShivYatra Tourism Chatbot...")
-    print("🌐 UI will be available at: http://localhost:7860")
-    print("⏹️ Press Ctrl+C to stop")
+    print("Starting ShivYatra Tourism Chatbot...")
+    print("UI will be available at: http://localhost:7860")
+    print("Press Ctrl+C to stop")
     
     try:
         from chatbot_ui import main as launch_ui
         launch_ui()
     except KeyboardInterrupt:
-        print("\\n👋 Shutting down ShivYatra Chatbot...")
+        print("\nShutting down ShivYatra Chatbot...")
     except Exception as e:
-        print(f"❌ Error launching chatbot: {str(e)}")
+        print(f"Error launching chatbot: {str(e)}")
         return 1
     
     return 0

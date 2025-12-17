@@ -29,30 +29,21 @@ class ShivYatraChatbotUI:
         
     def initialize(self):
         """Initialize RAG pipeline"""
-        print("🚀 Initializing ShivYatra Tourism Chatbot...")
+        print("Initializing ShivYatra Tourism Chatbot...")
         self.rag_pipeline = create_rag_pipeline()
         
         if self.rag_pipeline:
             self.is_ready = True
-            print("✅ Chatbot initialized successfully!")
+            print("Chatbot initialized successfully!")
         else:
-            print("❌ Failed to initialize chatbot")
+            print("Failed to initialize chatbot")
         
         return self.is_ready
     
     def chat_fn(self, message: str, history: List[Dict[str, str]]) -> List[Dict[str, str]]:
-        """
-        Main chat function for Gradio interface
-        
-        Args:
-            message: User input message
-            history: Chat history as list of message dictionaries
-        
-        Returns:
-            Updated chat history
-        """
+        """Main chat function for Gradio interface"""
         if not self.is_ready or not self.rag_pipeline:
-            error_response = "🚨 **System Error**: Chatbot not properly initialized. Please restart the application."
+            error_response = "**System Error**: Chatbot not properly initialized. Please restart the application."
             history.append({"role": "user", "content": message})
             history.append({"role": "assistant", "content": error_response})
             return history
@@ -60,50 +51,25 @@ class ShivYatraChatbotUI:
         if not message.strip():
             return history
         
-        # Add user message to history
         history.append({"role": "user", "content": message})
         
         try:
-            # Get RAG response
             result = self.rag_pipeline.chat(message)
-            
-            # Format response with metadata
             response = self._format_response(result)
-            
-            # Add assistant response to history
             history.append({"role": "assistant", "content": response})
-            
             return history
             
         except Exception as e:
-            error_response = f"❌ **Error**: {str(e)}"
+            error_response = f"**Error**: {str(e)}"
             history.append({"role": "assistant", "content": error_response})
             return history
     
     def _format_response(self, result: Dict[str, Any]) -> str:
-        """Format RAG response with metadata and sources"""
+        """Format RAG response with clean output"""
         response = result.get("response", "")
-        context_docs = result.get("context_docs", [])
-        processing_time = result.get("processing_time", 0)
         
-        # Main response
-        formatted_response = f"{response}"
-        
-        # Add sources if available
-        if context_docs and len(context_docs) > 0:
-            formatted_response += "\\n\\n---\\n**📚 Sources:**\\n"
-            
-            for i, doc in enumerate(context_docs[:3], 1):  # Show top 3 sources
-                metadata = doc['metadata']
-                similarity = doc['similarity']
-                
-                source_info = f"{i}. **{metadata['city']}, {metadata['state']}** ({metadata['category']}) - Relevance: {similarity:.2f}"
-                formatted_response += f"\\n{source_info}"
-        
-        # Add processing time
-        formatted_response += f"\\n\\n*⏱️ Response time: {processing_time}s*"
-        
-        return formatted_response
+        # Return clean response without extra formatting
+        return response.strip()
     
     def get_example_questions(self) -> List[List[str]]:
         """Get example questions for the interface"""
@@ -128,16 +94,16 @@ class ShivYatraChatbotUI:
     def get_system_status(self) -> str:
         """Get formatted system status"""
         if not self.rag_pipeline:
-            return "❌ **System Status**: Not initialized"
+            return "**System Status**: Platform not initialized"
         
         health = self.rag_pipeline.get_health_status()
         
         status_parts = []
-        status_parts.append("**🔧 System Status:**")
-        status_parts.append(f"• Vector Store: {'✅' if health['vector_store'] else '❌'} ({health['total_embeddings']:,} embeddings)")
-        status_parts.append(f"• Embedding Model: {'✅' if health['embedding_model'] else '❌'}")
-        status_parts.append(f"• Ollama LLM: {'✅' if health['ollama'] else '❌'}")
-        status_parts.append(f"• Overall: {'🟢 Ready' if health['initialized'] else '🔴 Error'}")
+        status_parts.append("**Platform Status:**")
+        status_parts.append(f"• Vector Database: {'ONLINE' if health['vector_store'] else 'OFFLINE'} ({health['total_embeddings']:,} entries)")
+        status_parts.append(f"• Embedding Engine: {'ACTIVE' if health['embedding_model'] else 'INACTIVE'}")
+        status_parts.append(f"• AI Language Model: {'CONNECTED' if health['ollama'] else 'DISCONNECTED'}")
+        status_parts.append(f"• Overall Status: {'OPERATIONAL' if health['initialized'] else 'ERROR'}")
         
         return "\\n".join(status_parts)
     
@@ -147,19 +113,32 @@ class ShivYatraChatbotUI:
         # Custom CSS for better styling
         custom_css = """
         .gradio-container {
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            background: linear-gradient(135deg, #1a1a1a 0%, #2d2d2d 100%);
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
         }
         .chat-container {
-            background: white;
-            border-radius: 15px;
-            box-shadow: 0 10px 30px rgba(0,0,0,0.1);
+            background: #ffffff;
+            border-radius: 8px;
+            box-shadow: 0 4px 20px rgba(0,0,0,0.15);
+            border: 1px solid #e0e0e0;
         }
         .header {
             text-align: center;
-            padding: 20px;
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-            color: white;
-            border-radius: 15px 15px 0 0;
+            padding: 24px;
+            background: linear-gradient(135deg, #2c3e50 0%, #34495e 100%);
+            color: #ffffff;
+            border-radius: 8px 8px 0 0;
+            border-bottom: 2px solid #1a252f;
+        }
+        .status-panel {
+            background: #f8f9fa;
+            border: 1px solid #dee2e6;
+            border-radius: 6px;
+            padding: 16px;
+        }
+        .professional-text {
+            color: #2c3e50;
+            line-height: 1.6;
         }
         """
         
@@ -170,9 +149,9 @@ class ShivYatraChatbotUI:
             # Header
             gr.HTML(f"""
             <div class="header">
-                <h1>🏔️ ShivYatra Tourism Assistant</h1>
-                <p>Your AI-powered guide for exploring incredible destinations in India</p>
-                <p><em>Powered by RAG + Ollama + ChromaDB</em></p>
+                <h1 style="margin: 0; font-size: 2.2em; font-weight: 600; color: #ffffff;">ShivYatra Tourism Assistant</h1>
+                <p style="margin: 8px 0 4px 0; font-size: 1.1em; color: #ecf0f1;">Professional AI-Powered Travel Consultation Platform</p>
+                <p style="margin: 0; font-size: 0.95em; color: #bdc3c7;"><em>Advanced RAG Technology | Ollama LLM | Vector Database</em></p>
             </div>
             """)
             
@@ -180,8 +159,8 @@ class ShivYatraChatbotUI:
                 with gr.Column(scale=4):
                     # Main chat interface
                     chatbot = gr.Chatbot(
-                        label="Chat with ShivYatra Assistant",
-                        placeholder="Ask me anything about traveling in India! 🇮🇳",
+                        label="Professional Travel Consultation",
+                        placeholder="Welcome to ShivYatra Professional Tourism Consultation Platform",
                         height=500,
                         container=True,
                         show_label=False
@@ -189,16 +168,16 @@ class ShivYatraChatbotUI:
                     
                     with gr.Row():
                         msg_input = gr.Textbox(
-                            placeholder="Ask about destinations, activities, budget tips, or anything related to Indian tourism...",
+                            placeholder="Enter your travel inquiry: destinations, activities, budget planning, or consultation requests...",
                             container=False,
                             scale=4,
                             lines=1
                         )
-                        send_btn = gr.Button("Send 🚀", variant="primary", scale=1)
-                        clear_btn = gr.Button("Clear 🗑️", variant="secondary", scale=1)
+                        send_btn = gr.Button("Send", variant="primary", scale=1)
+                        clear_btn = gr.Button("Clear", variant="secondary", scale=1)
                     
                     # Example questions
-                    with gr.Accordion("💡 Example Questions", open=False):
+                    with gr.Accordion("Example Questions", open=False):
                         examples = gr.Examples(
                             examples=self.get_example_questions(),
                             inputs=[msg_input],
@@ -207,29 +186,32 @@ class ShivYatraChatbotUI:
                 
                 with gr.Column(scale=1):
                     # Status panel
-                    with gr.Accordion("📊 System Status", open=True):
+                    with gr.Accordion("System Status", open=True):
                         status_display = gr.Markdown(
                             self.get_system_status(),
                             label="System Status"
                         )
-                        refresh_btn = gr.Button("Refresh Status 🔄", variant="secondary")
+                        refresh_btn = gr.Button("Refresh Status", variant="secondary")
                     
                     # Information panel
-                    with gr.Accordion("ℹ️ About", open=False):
+                    with gr.Accordion("About", open=False):
                         gr.Markdown("""
-                        **ShivYatra Tourism Assistant**
+                        **ShivYatra Professional Tourism Platform**
                         
-                        🔹 **AI Model**: Qwen2.5:1.5B via Ollama
-                        🔹 **Knowledge Base**: 4,160+ tourism chunks
-                        🔹 **Regions Covered**: Himachal, Uttarakhand, J&K, Ladakh, and more
-                        🔹 **Capabilities**: 
-                           - Destination recommendations
-                           - Activity suggestions
-                           - Budget planning
-                           - Cultural insights
-                           - Practical travel tips
+                        **Technical Specifications:**
+                        • AI Model: Qwen2.5:1.5B via Ollama
+                        • Knowledge Base: 4,160+ curated tourism entries
+                        • Coverage: Himachal Pradesh, Uttarakhand, Jammu & Kashmir, Ladakh
                         
-                        **🚨 Note**: Make sure Ollama is running:
+                        **Service Capabilities:**
+                        • Destination Analysis & Recommendations
+                        • Activity Planning & Consultation
+                        • Budget Optimization Strategies
+                        • Cultural Intelligence & Local Insights
+                        • Professional Travel Advisory
+                        
+                        **System Requirements:**
+                        Ensure Ollama service is active:
                         ```bash
                         ollama serve
                         ```
@@ -276,22 +258,10 @@ class ShivYatraChatbotUI:
                 return [{
                     "role": "assistant",
                     "content": """
-👋 **Welcome to ShivYatra - Your AI Tourism Assistant!**
+**Welcome to ShivYatra Professional Tourism Consultation Platform**
 
-I'm here to help you explore the incredible destinations across India! Here's what I can help you with:
-
-🏔️ **Destinations**: Discover amazing places in Himachal Pradesh, Uttarakhand, Kashmir, Ladakh, and more
-🎯 **Activities**: Adventure sports, cultural experiences, spiritual journeys, family fun
-💰 **Budget Planning**: Find options that fit your budget - from budget-friendly to luxury
-🎒 **Travel Types**: Solo travel, family trips, adventure tours, spiritual journeys
-📍 **Local Insights**: Hidden gems, local culture, practical tips, and authentic experiences
-
-**Just ask me anything!** For example:
-- "What are the best places for adventure sports in Himachal?"
-- "I have ₹20,000 budget for a family trip. Where should we go?"
-- "Tell me about spiritual places in Uttarakhand"
-
-Let's start planning your incredible Indian adventure! 🇮🇳✨
+I am your dedicated AI travel consultant, specializing in comprehensive tourism solutions across India's premier destinations.
+How can I assist you in planning your next unforgettable journey?
                     """
                 }]
             
@@ -305,14 +275,13 @@ Let's start planning your incredible Indian adventure! 🇮🇳✨
     def launch(self):
         """Launch the Gradio interface"""
         if not self.initialize():
-            print("❌ Cannot launch chatbot - initialization failed")
+            print("Platform initialization failed - unable to launch interface")
             return None
         
-        print(f"🚀 Launching ShivYatra Chatbot UI...")
+        print("Launching ShivYatra Professional Tourism Platform...")
         
         interface = self.create_interface()
         
-        # Launch with configuration
         interface.launch(
             server_name=UI_CONFIG["server_name"],
             server_port=UI_CONFIG["server_port"],
@@ -325,8 +294,8 @@ Let's start planning your incredible Indian adventure! 🇮🇳✨
 
 
 def main():
-    """Main function to launch the chatbot"""
-    print("🏔️ Starting ShivYatra Tourism Chatbot...")
+    """Main function to launch the platform"""
+    print("Initializing ShivYatra Professional Tourism Platform...")
     
     chatbot_ui = ShivYatraChatbotUI()
     chatbot_ui.launch()

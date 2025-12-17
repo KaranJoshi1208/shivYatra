@@ -1,10 +1,6 @@
-"""
-RAG Pipeline Configuration for ShivYatra Tourism Chatbot
-Configuration settings for Ollama LLM, ChromaDB, and Gradio UI
-"""
+"""RAG Pipeline Configuration for ShivYatra Tourism Chatbot"""
 
 from pathlib import Path
-import os
 
 # Project paths
 RAG_ROOT = Path(__file__).parent.parent
@@ -14,7 +10,7 @@ CHROMA_DB_PATH = VECTOR_DB_PATH / "chromadb"
 
 # Ollama LLM Configuration
 OLLAMA_CONFIG = {
-    "base_url": "http://localhost:11434",  # Default Ollama server
+    "base_url": "http://localhost:11434",
     "model": "qwen2.5:1.5b",
     "temperature": 0.7,
     "max_tokens": 1000,
@@ -32,7 +28,7 @@ CHROMADB_CONFIG = {
 
 # RAG Pipeline Settings
 RAG_SETTINGS = {
-    "context_window": 4000,  # Maximum context length for qwen2.5:1.5b
+    "context_window": 4000,
     "max_context_chunks": 5,
     "relevance_threshold": 0.3,
     "fallback_enabled": True,
@@ -41,17 +37,17 @@ RAG_SETTINGS = {
 
 # Gradio UI Configuration
 UI_CONFIG = {
-    "title": "🏔️ ShivYatra Tourism Assistant",
+    "title": "ShivYatra Tourism Assistant",
     "description": "Your AI-powered guide for exploring incredible destinations in India",
     "theme": "soft",
     "server_port": 7860,
     "server_name": "localhost",
-    "share": False,  # Set to True for public sharing
+    "share": False,
     "debug": False
 }
 
 # Prompt Templates
-SYSTEM_PROMPT = """You are ShivYatra, an expert AI tourism assistant specializing in Indian travel destinations. 
+SYSTEM_PROMPT = """You are Yatri, an expert AI tourism assistant specializing in Indian travel destinations. 
 You help travelers discover amazing places, plan trips, and provide detailed information about destinations across India.
 
 Your knowledge is based on comprehensive tourism data from Indian destinations including places in Himachal Pradesh, 
@@ -83,5 +79,3 @@ RESPONSE_CONFIG = {
     "format_markdown": True,
     "show_confidence": False
 }
-
-print("✅ RAG Pipeline configuration loaded")
