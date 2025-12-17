@@ -28,7 +28,7 @@ class TourismQueryEngine:
     def connect(self) -> bool:
         """Connect to existing ChromaDB"""
         try:
-            print("🔄 Connecting to ChromaDB...")
+            print("Connecting to ChromaDB...")
             
             self.client = chromadb.PersistentClient(
                 path=str(CHROMA_DB_PATH),
@@ -39,31 +39,21 @@ class TourismQueryEngine:
             self.is_connected = True
             
             count = self.collection.count()
-            print(f"✅ Connected to ChromaDB!")
-            print(f"🗂️  Collection: {COLLECTION_NAME}")
-            print(f"📊 Total entries: {count:,}")
+            print(f"Connected to ChromaDB!")
+            print(f"Collection: {COLLECTION_NAME}")
+            print(f"Total entries: {count:,}")
             
             return True
             
         except Exception as e:
-            print(f"❌ Failed to connect to ChromaDB: {str(e)}")
+            print(f"Failed to connect to ChromaDB: {str(e)}")
             return False
     
     def semantic_search(self, query: str, limit: int = 10, 
                        include_similarity: bool = True) -> List[Dict[str, Any]]:
-        """
-        Perform semantic search using natural language query
-        
-        Args:
-            query: Natural language search query
-            limit: Maximum number of results
-            include_similarity: Include similarity scores in results
-        
-        Returns:
-            List of search results with content and metadata
-        """
+        """Perform semantic search using natural language query"""
         if not self.is_connected:
-            print("❌ Database not connected!")
+            print("Database not connected!")
             return []
         
         try:
@@ -94,7 +84,7 @@ class TourismQueryEngine:
             return formatted_results
             
         except Exception as e:
-            print(f"❌ Search failed: {str(e)}")
+            print(f"Search failed: {str(e)}")
             return []
     
     def filter_search(self, query: str, filters: Dict[str, Any], 
@@ -111,7 +101,7 @@ class TourismQueryEngine:
             Filtered search results
         """
         if not self.is_connected:
-            print("❌ Database not connected!")
+            print("Database not connected!")
             return []
         
         try:
@@ -147,7 +137,7 @@ class TourismQueryEngine:
             return formatted_results
             
         except Exception as e:
-            print(f"❌ Filtered search failed: {str(e)}")
+            print(f"Filtered search failed: {str(e)}")
             return []
     
     def get_recommendations(self, preferences: Dict[str, Any], 
@@ -198,7 +188,7 @@ class TourismQueryEngine:
                 return self.semantic_search(query, limit)
                 
         except Exception as e:
-            print(f"❌ Recommendation failed: {str(e)}")
+            print(f"Recommendation failed: {str(e)}")
             return []
     
     def get_location_insights(self, location: str) -> Dict[str, Any]:
@@ -253,20 +243,19 @@ class TourismQueryEngine:
             return insights
             
         except Exception as e:
-            print(f"❌ Location insights failed: {str(e)}")
+            print(f"Location insights failed: {str(e)}")
             return {"error": str(e)}
 
 
 def interactive_query_demo():
     """Interactive demo of query capabilities"""
-    print("🎯 TOURISM VECTOR DATABASE - INTERACTIVE DEMO")
+    print("TOURISM VECTOR DATABASE - INTERACTIVE DEMO")
     print("=" * 50)
     
-    # Initialize query engine
     query_engine = TourismQueryEngine()
     
     if not query_engine.connect():
-        print("❌ Failed to connect to database!")
+        print("Failed to connect to database!")
         return
     
     # Demo queries
@@ -324,29 +313,29 @@ def interactive_query_demo():
 def print_search_results(results: List[Dict[str, Any]]):
     """Print formatted search results"""
     if not results:
-        print("❌ No results found")
+        print("No results found")
         return
     
-    print(f"📊 Found {len(results)} results:")
+    print(f"Found {len(results)} results:")
     for result in results:
-        print(f"\n  🎯 Rank {result['rank']} | Similarity: {result.get('similarity', 'N/A')}")
-        print(f"     📍 {result['metadata']['city']}, {result['metadata']['state']}")
-        print(f"     📂 {result['metadata']['category']} → {result['metadata']['subcategory']}")
-        print(f"     💰 Budget: {result['metadata']['price_range']}")
-        print(f"     📝 {result['content'][:120]}...")
+        print(f"\n  Rank {result['rank']} | Similarity: {result.get('similarity', 'N/A')}")
+        print(f"     Location: {result['metadata']['city']}, {result['metadata']['state']}")
+        print(f"     Category: {result['metadata']['category']} → {result['metadata']['subcategory']}")
+        print(f"     Budget: {result['metadata']['price_range']}")
+        print(f"     Content: {result['content'][:120]}...")
 
 
 def print_location_insights(insights: Dict[str, Any]):
     """Print formatted location insights"""
     if "error" in insights:
-        print(f"❌ Error: {insights['error']}")
+        print(f"Error: {insights['error']}")
         return
     
-    print(f"🏔️  Location: {insights['location']}")
-    print(f"📊 Activities: {insights['total_activities']}")
-    print(f"📂 Categories: {', '.join(insights['top_categories'])}")
-    print(f"💰 Budget: Budget({insights['budget_distribution']['budget']}) | Unknown({insights['budget_distribution']['unknown']}) | Mid-range({insights['budget_distribution']['mid_range']})")
-    print(f"🎯 Best for: Adventure({insights['traveler_suitability']['adventure']}) | Family({insights['traveler_suitability']['family']}) | Solo({insights['traveler_suitability']['solo']})")
+    print(f"Location: {insights['location']}")
+    print(f"Activities: {insights['total_activities']}")
+    print(f"Categories: {', '.join(insights['top_categories'])}")
+    print(f"Budget: Budget({insights['budget_distribution']['budget']}) | Unknown({insights['budget_distribution']['unknown']}) | Mid-range({insights['budget_distribution']['mid_range']})")
+    print(f"Best for: Adventure({insights['traveler_suitability']['adventure']}) | Family({insights['traveler_suitability']['family']}) | Solo({insights['traveler_suitability']['solo']})") 
 
 
 if __name__ == "__main__":

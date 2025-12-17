@@ -37,12 +37,12 @@ RAG_SETTINGS = {
 
 # Gradio UI Configuration
 UI_CONFIG = {
-    "title": "ShivYatra Tourism Assistant",
-    "description": "Your AI-powered guide for exploring incredible destinations in India",
+    "title": "🏔️ ShivYatra - AI Tourism Assistant",
+    "description": "ShivYatra Professional Tourism Platform - Discover incredible destinations across India with AI-powered recommendations",
     "theme": "soft",
     "server_port": 7860,
     "server_name": "localhost",
-    "share": False,
+    "share": True,
     "debug": False
 }
 
