@@ -1,0 +1,24 @@
+# Yatri Travel Assistant Requirements
+# Dependencies for tourism chatbot with Flask + Ollama + ChromaDB
+
+# Web framework
+flask>=3.0.0                     # Web server
+flask-cors>=4.0.0                # CORS support for API
+
+# Core RAG dependencies
+requests>=2.28.0                 # HTTP client for Ollama API
+sentence-transformers>=2.2.0     # Embeddings for query encoding
+
+# Vector database
+chromadb>=0.4.0                  # Vector store
+numpy>=1.21.0                    # Numerical computations
+
+# LLM integration
+# Note: Ollama runs as separate service, no Python package needed
+
+# Utilities
+python-dotenv>=1.0.0            # Environment variables
+tqdm>=4.62.0                    # Progress bars
+
+# Development dependencies (optional)
+pytest>=7.0.0                   # Testing
