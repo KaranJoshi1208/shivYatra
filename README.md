@@ -80,3 +80,7 @@ OLLAMA_CONFIG = {
 - **Embeddings**: all-MiniLM-L6-v2
 - **Backend**: Flask
 - **Frontend**: HTML/CSS/JS
+
+## License
+
+[MIT](LICENSE)
