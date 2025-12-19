@@ -1,4 +1,4 @@
-# Yatri - AI Tourism Assistant
+# ShivYatri - AI Tourism Assistant
 
 Local RAG-powered chatbot for Indian travel destinations using Ollama + ChromaDB.
 
